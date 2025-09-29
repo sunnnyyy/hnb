@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en"
+	th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+<title>Revenu Reports</title>
+</head>
+<body>
+	<div id="content">
+		<!-- sidebar -->
+
+		<!-- user is logged in : sidebar -->
+
+		<div th:if="${loggedInUser}">
+			<div data-th-replace="~{user/sidebar :: sidebar}"></div>
+		</div>
+
+		<div class="sm:pl-64 pt-20">
+
+			<div class="contacts_container p-5">
+				<div class="flex flex-col md:flex-row gap-8 w-full">
+
+
+					<div class="w-full md:w-1/2 bg-gray-100 p-4 rounded">
+					 
+
+
+
+						<div
+							class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+
+							<div class="flex justify-between items-start w-full">
+								<div class="flex-col items-center">
+									<div class="flex items-center mb-1">
+										<h5
+											class="text-xl font-bold leading-none text-gray-900 dark:text-white me-1">Profit/Loss
+											Report
+										</h5>
+									</div>
+								</div>
+							</div>
+							<!-- Line Chart -->
+							<div class="py-6" id="pie-chart"></div>
+						</div>
+					</div>
+
+					<div class="w-full md:w-1/2 bg-gray-200 p-4 rounded">
+					 
+
+						<div
+							class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
+							<div
+								class="flex justify-between border-gray-200 border-b dark:border-gray-700 pb-3">
+								<dl>
+									<dt
+										class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">Profit/Loss</dt>
+									<dd
+										class="leading-none text-3xl font-bold text-gray-900 dark:text-white" ></dd>
+								</dl>
+								<div>
+									<span id="profit-loss"
+										>
+										 
+									</span>
+								</div>
+							</div>
+
+							<div class="grid grid-cols-2 py-3">
+								<dl>
+									<dt
+										class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">Income</dt>
+									<dd
+										class="leading-none text-xl font-bold text-green-500 dark:text-green-400" > <span id="totalRevenueAllMonths"></span></dd>
+								</dl>
+								<dl>
+									<dt
+										class="text-base font-normal text-gray-500 dark:text-gray-400 pb-1">Expense</dt>
+									<dd
+										class="leading-none text-xl font-bold text-red-600 dark:text-red-500"><span id="totalExpenseAllMonths"></span></dd>
+								</dl>
+							</div>
+
+							<div id="bar-chart"></div>
+							
+						</div>
+
+
+					</div>
+					
+				</div>
+					   
+	     <table class="min-w-full  border border-gray-200 rounded-lg shadow">
+	       <thead>
+	         <tr class="bg-gray-100 text-gray-700 text-left">
+	           <th class="py-2 px-4 border-b">Total</th>
+	           <th class="py-2 px-4 border-b">Remaining Profit/Loss</th>
+	         </tr>
+	       </thead>
+	       <tbody>
+	         <tr>
+	           <td class="py-2 px-4 border-b">Cash Amount</td>
+	           <td class="py-2 px-4 border-b" th:text="${financialSummary.netCashBalance.longValue()}"></td>
+	         </tr>
+	         <tr class="bg-gray-50">
+	           <td class="py-2 px-4 border-b">Online Amount</td>
+	           <td class="py-2 px-4 border-b" th:text="${financialSummary.netOnlineBalance.longValue()}"></td>
+	         </tr>
+	         <tr>
+	           <td class="py-2 px-4 border-b font-semibold">Remaining Amount</td>
+				<td class="py-2 px-4 border-b font-semibold" th:text="${financialSummary.netBalance.longValue()}"></td>
+	         </tr>
+	       </tbody>
+	     </table>
+	   		<br/>
+	     <table class="min-w-full  border border-gray-200 rounded-lg shadow">
+	       <thead>
+	         <tr class="bg-gray-100 text-gray-700 text-left">
+	           <th class="py-2 px-4 border-b">Owner</th>
+	           <th class="py-2 px-4 border-b">Total Withdraw</th>
+	         </tr>
+	       </thead>
+	       <tbody>
+				<tr th:each="row : ${ownerAmount}">
+					<td class="py-2 px-4 border-b" th:text="${row['owner']}"></td>
+					<td class="py-2 px-4 border-b" th:text="${row['total']}"></td>
+				</tr>
+				<tr class="bg-gray-100 text-gray-700 text-left">
+				<th class="py-2 px-4 border-b font-semibold">Total</th>
+				<th class="py-2 px-4 border-b font-semibold" th:text="${totalSum}"></th>
+				</tr>		
+	       </tbody>
+	     </table>
+	   		<br/>
+				
+				<button 
+					th:onclick="loadContactdata(1)"
+					class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Withdraw Amount
+				
+                </button>
+			
+						<table id="expense-table"
+							data-th-if="${pageReport.totalElements > 0}"
+							class="w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+							<thead
+								class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
+								<tr>
+<!-- 									<th scope="col" class="px-6 py-3 text-center">Cash</th>
+									<th scope="col" class="px-6 py-3 text-center">Online</th> -->
+									<th scope="col" class="px-1 py-1 text-center">S.Nb</th>
+									<th scope="col" class="px-6 py-3 text-center">Name</th>
+									<th scope="col" class="px-6 py-3 text-center">Cash</th>
+									<th scope="col" class="px-6 py-3 text-center">Online</th>
+									<th scope="col" class="px-6 py-3 text-center">Total Amount Withdraw</th>
+									<th scope="col" class="px-6 py-3 text-center">Withdraw Date</th>
+								</tr>
+							</thead>
+							<tbody >
+								<tr data-th-each="r, iterStat : ${pageReport.getContent()}">
+      								<td th:text="${iterStat.index + 1}">1</td>  <!-- Serial Number -->
+									<td th:text="${r.getOwners}">0.00</td>
+									<td th:text="${r.getCash}">0.00</td>
+									<td th:text="${r.getOnline}">0.00</td>
+									<td th:text="${r.getTotalAmount}">0.00</td>
+									<td th:text="${#temporals.format(r.getWithdrawDate, 'dd-MMM-yyyy')}">0.00</td>
+									
+								</tr>
+
+							</tbody>
+						</table>
+					
+    <!-- Pagination controls -->
+     
+        <div
+         data-th-if="${pageReport.totalPages > 0}"
+         class="pagination_container  dark:bg-gray-800 p-5 text-center"
+       >
+    
+        <nav aria-label="Page navigation example">
+
+        <ul class="inline-flex -space-x-px text-base h-10">
+          
+           <li data-th-unless="${pageReport.first}">
+             <a
+         	class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"  
+             th:href="@{/user/expense/report/owner(page=${pageReport.number - 1}, size=${pageSize})}">Previous</a>
+
+        	   </li>
+           <li
+             th:each="i : ${#numbers.sequence(0, pageReport.totalPages - 1)}"
+           >
+             <a th:href="@{/user/expense/report/owner(page=${i}, size=${pageSize})}"
+ 				th:text="${i + 1}"  
+				class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+             >
+               <span data-th-text="${index+1}"></span>
+             </a>
+           </li>
+          
+
+        
+          <li data-th-unless="${pageReport.last}">
+           <a th:href="@{/user/expense/report/owner(page=${pageReport.number + 1}, size=${pageSize})}"
+           class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+               >Next
+           </a>
+
+          </li>
+        </ul>
+      </nav>
+    </div>
+  
+  <div th:if="${pageReport.totalElements == 0}">
+    <p>No results found</p>
+  </div>	
+
+			</div>
+
+
+        <div data-th-replace="~{ user/withdraw_model :: withdraw_model}"></div>
+
+		</div>
+
+	</div>
+
+
+
+	<script data-th-src="@{'/js/withdraw.js'}"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
+
+		<script>
+		
+	let withdrawData = [];
+	document.addEventListener("DOMContentLoaded", async function() {
+		  try {
+		    const response = await fetch('http://localhost:8081/api/get-six-month-withdrawal-amount');
+		    
+		    if (!response.ok) {
+		      throw new Error(`HTTP error! status: ${response.status}`);
+		    }
+
+		    withdrawData = await response.json();
+
+		    // You can call a function here to render or process this data on your page
+		    // e.g. renderWithdrawData(withdrawData);
+
+		  } catch (error) {
+		    console.error("Failed to fetch withdrawal data:", error);
+		  }
+		
+		  const years = withdrawData.map(item => item.year);
+	      const months = withdrawData.map(item => item.month);
+		  const totalExpenses = withdrawData.map(item => item.totalExpense);
+		  const totalRevenues = withdrawData.map(item => item.totalRevenue);
+		  const totalExpenseAllMonths = withdrawData[0]?.totalExpenseAllMonths;
+		  const totalRevenueAllMonths = withdrawData[0]?.totalRevenueAllMonths;	
+		  const profitLoss = totalRevenueAllMonths - totalExpenseAllMonths;	
+		  console.log("Years:", years);
+	      console.log("Months:", months);
+	      console.log("Total Expenses:", totalExpenses);
+	      console.log("Total Revenues:", totalRevenues);
+	      console.log("Total Expense All Months:", totalExpenseAllMonths);
+	      console.log("Total Revenue All Months:", totalRevenueAllMonths);
+		  
+		  console.log("outsiede Withdrawal Data:", withdrawData);
+		  
+		  document.getElementById("totalExpenseAllMonths").textContent = totalExpenseAllMonths;
+		  document.getElementById("totalRevenueAllMonths").textContent = totalRevenueAllMonths;
+		  document.getElementById("profit-loss").innerHTML = profitLoss >= 0 ? `Profit: ₹${profitLoss}` : `Loss: ₹${Math.abs(profitLoss)}`;
+		  document.getElementById("profit-loss").className = profitLoss >= 0 
+		  ? "bg-green-100 text-green-800 text-sm font-bold inline-flex items-center px-2.5 py-1 rounded-md dark:bg-green-900 dark:text-green-300"
+		  : "bg-red-100 text-red-800 text-sm font-bold inline-flex items-center px-2.5 py-1 rounded-md dark:bg-red-900 dark:text-red-300";
+
+		  // divide profitLoss in 3 parts 50 percent, 25 percent, 25 percent
+		  const profitLossPart1 = profitLoss * 0.5;
+		  const profitLossPart2 = profitLoss * 0.25;
+		  const profitLossPart3 = profitLoss * 0.25;
+		
+	  const getChartOptions = () => {
+		  return {
+		    series: [profitLossPart1, profitLossPart2, profitLossPart3],
+		    colors: ["#1C64F2", "#16BDCA", "#9061F9"],
+		    chart: {
+		      height: 420,
+		      width: "100%",
+		      type: "pie",
+		    },
+		    stroke: {
+		      colors: ["white"],
+		      lineCap: "",
+		    },
+		    plotOptions: {
+		      pie: {
+		        labels: {
+		          show: true,
+		        },
+		        size: "100%",
+		        dataLabels: {
+		          offset: -25
+		        }
+		      },
+		    },
+		    labels: ["N", "S", "A"],
+		    dataLabels: {
+		      enabled: true,
+		      style: {
+		        fontFamily: "Inter, sans-serif",
+		      },
+		    },
+		    legend: {
+		      position: "bottom",
+		      fontFamily: "Inter, sans-serif",
+		    },
+		    yaxis: {
+		      labels: {
+		        formatter: function (value) {
+		          return value + " ₹"
+		        },
+		      },
+		    },
+		    xaxis: {
+		      labels: {
+		        formatter: function (value) {
+		          return value  + " ₹"
+		        },
+		      },
+		      axisTicks: {
+		        show: false,
+		      },
+		      axisBorder: {
+		        show: false,
+		      },
+		    },
+		  }
+		}
+	
+		if (document.getElementById("pie-chart") && typeof ApexCharts !== 'undefined') {
+		  const chart = new ApexCharts(document.getElementById("pie-chart"), getChartOptions());
+		  chart.render();
+		}
+	
+	   
+	    
+	    const options1 = {
+	      series: [
+	        {
+	          name: "Income",
+	          color: "#31C48D",
+	          data: totalRevenues,
+	        },
+	        {
+	          name: "Expense",
+	          data: totalExpenses,
+	          color: "#F05252",
+	        }
+	      ],
+	      chart: {
+	        sparkline: {
+	          enabled: false,
+	        },
+	        type: "bar",
+	        width: "100%",
+	        height: 400,
+	        toolbar: {
+	          show: false,
+	        }
+	      },
+	      fill: {
+	        opacity: 1,
+	      },
+	      plotOptions: {
+	        bar: {
+	          horizontal: true,
+	          columnWidth: "100%",
+	          borderRadiusApplication: "end",
+	          borderRadius: 6,
+	          dataLabels: {
+	            position: "top",
+	          },
+	        },
+	      },
+	      legend: {
+	        show: true,
+	        position: "bottom",
+	      },
+	      dataLabels: {
+	        enabled: false,
+	      },
+	      tooltip: {
+	        shared: true,
+	        intersect: false,
+	        formatter: function (value) {
+	          return "₹" + value
+	        }
+	      },
+	      xaxis: {
+	        labels: {
+	          show: true,
+	          style: {
+	            fontFamily: "Inter, sans-serif",
+	            cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+	          },
+	          formatter: function(value) {
+	            return "₹" + value
+	          }
+	        },
+	        categories: months,
+	        axisTicks: {
+	          show: false,
+	        },
+	        axisBorder: {
+	          show: false,
+	        },
+	      },
+	      yaxis: {
+	        labels: {
+	          show: true,
+	          style: {
+	            fontFamily: "Inter, sans-serif",
+	            cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
+	          }
+	        }
+	      },
+	      grid: {
+	        show: true,
+	        strokeDashArray: 4,
+	        padding: {
+	          left: 2,
+	          right: 2,
+	          top: -20
+	        },
+	      },
+	      fill: {
+	        opacity: 1,
+	      }
+	    }
+		
+	    if(document.getElementById("bar-chart") && typeof ApexCharts !== 'undefined') {
+	      const chart = new ApexCharts(document.getElementById("bar-chart"), options1);
+	      chart.render();
+	    }
+
+	 });
+    </script>
+    
+</body>
+</html>

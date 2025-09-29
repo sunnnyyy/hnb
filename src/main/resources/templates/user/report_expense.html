@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"
+	th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}">
+<head>
+<title>Expenses List</title>
+</head>
+<body>
+	<div id="content">
+		<!-- sidebar -->
+
+		<!-- user is logged in : sidebar -->
+
+		<div th:if="${loggedInUser}">
+			<div data-th-replace="~{user/sidebar :: sidebar}"></div>
+		</div>
+
+		<div class="sm:pl-64 pt-20">
+			<div class="">
+				<div class="flex justify-center flex-col items-center"></div>
+				<div class="contacts_container p-5">
+					<div
+						class="flex md:flex-row flex-col items-center px-4 justify-between bg-white dark:bg-gray-900 text-center">
+		<!-- 				<form data-th-object="${expenseSearchForm}" action=""
+							data-th-action="@{'/user/expense/search'}">
+							<div
+								class="flex space-x-3 p-5 items-center justify-start flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4">
+								select box  
+
+								<div>
+									<select data-th-field="*{expenseType}" id="countries_disabled"
+										class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+										<option value="" selected>Select Expense Type</option>
+										<option
+											th:each="type : ${T(com.hnb.enums.ExpenseType).values()}"
+											th:value="${type}" th:text="${type}"></option>
+									</select>
+								</div>
+								<label for="table-search" class="sr-only">Search</label>
+								<div class="relative">
+									<div
+										class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+										<svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
+											aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+											fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor"
+												stroke-linecap="round" stroke-linejoin="round"
+												stroke-width="2"
+												d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                      </svg>
+									</div>
+									<input data-th-field="*{keyword}" type="text"
+										id="table-search-users"
+										class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+										placeholder="Search for users" />
+								</div>
+								<button type="submit"
+									class="px-3 py-2 bg-gray-800 text-white rounded">
+									Search</button>
+							</div>
+						</form> -->
+								<p class="text-center" data-th-text="${pageReport.totalElements}+' results found'"></p>
+
+						<div>
+							<button type="button" onclick="exportData()"
+								class="px-3 py-2 bg-green-800 text-white rounded">
+								Export</button>
+						</div>
+					</div>
+					<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+						<div data-th-replace="~{message :: messagebox}"></div>
+
+						<table id="expense-table"
+							data-th-if="${pageReport.totalElements > 0}"
+							class="w-full text-sm text-center rtl:text-right text-gray-500 dark:text-gray-400">
+							<thead
+								class="text-xs text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
+								<tr>
+<!-- 									<th scope="col" class="px-6 py-3 text-center">Cash</th>
+									<th scope="col" class="px-6 py-3 text-center">Online</th> -->
+									<th scope="col" class="px-6 py-3 text-center">[- Cash</th>
+									<th scope="col" class="px-6 py-3 text-center">Online</th>
+									<th scope="col" class="px-6 py-3 text-center">Total Expenses -]</th>
+									<th scope="col" class="px-6 py-3 text-center">[- Cash</th>
+									<th scope="col" class="px-6 py-3 text-center">Online</th>
+									<th scope="col" class="px-6 py-3 text-center">Total Revenue -]</th>
+									<th scope="col" class="px-6 py-3 text-center border-l border-r border-gray-300">Profit/Loss</th>
+									<th scope="col" class="px-6 py-3 text-center">Total Customers</th>
+									<th scope="col" class="px-6 py-3 text-center">Duration</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr data-th-each="r : ${pageReport.getContent()}">
+									<td th:text="${r.totalCashExpense}">0.00</td>
+									<td th:text="${r.totalOnlineExpense}">0.00</td>
+									<td class="border-l border-r border-gray-300" th:text="${r.totalExpense}">0.00</td>
+									<td class="px-4 py-2 text-center" th:text="${r.totalCashRevenue}">0.00</td>
+									<td th:text="${r.totalOnlineRevenue}">0.00</td>
+									<td class="border-l border-r border-gray-300" th:text="${r.totalCashRevenue + r.totalOnlineRevenue}">Cash: 100.00 + Online: 50.00 = 150.00</td>
+									<td class="border-l border-r border-gray-300" th:text="${(r.totalCashRevenue + r.totalOnlineRevenue) - r.totalExpense}">0.00</td>
+									<td th:text="${r.totalCustomers}">0</td>
+									<td th:text="${r.month + ' - ' + r.year}">Date</td>
+								</tr>
+
+							</tbody>
+						</table>
+					
+    <!-- Pagination controls -->
+     
+        <div
+         data-th-if="${pageReport.totalPages > 0}"
+         class="pagination_container bg-white dark:bg-gray-800 p-5 text-center"
+       >
+    
+        <nav aria-label="Page navigation example">
+
+        <ul class="inline-flex -space-x-px text-base h-10">
+          
+           <li data-th-unless="${pageReport.first}">
+             <a
+         	class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"  
+             th:href="@{/user/expense/report(page=${pageReport.number - 1}, size=${pageSize})}">Previous</a>
+
+        	   </li>
+           <li
+             th:each="i : ${#numbers.sequence(0, pageReport.totalPages - 1)}"
+           >
+             <a th:href="@{/user/expense/report(page=${i}, size=${pageSize})}"
+ 				th:text="${i + 1}"  
+				class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+             >
+               <span data-th-text="${index+1}"></span>
+             </a>
+           </li>
+          
+
+        
+          <li data-th-unless="${pageReport.last}">
+           <a th:href="@{/user/expense/report(page=${pageReport.number + 1}, size=${pageSize})}"
+           class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+               >Next
+           </a>
+
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div th:if="${pageReport.totalElements == 0}">
+    <p>No results found</p>
+  </div>					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/@linways/table-to-excel@1.0.4/dist/tableToExcel.min.js"></script>
+	<script data-th-src="@{'/js/contacts.js'}"></script>
+	<script>
+      function exportData() {
+        TableToExcel.convert(document.getElementById("expense-table"), {
+          name: "expense_report.xlsx",
+          sheet: {
+            name: "Sheet 1",
+          },
+        });
+      } 
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}"
+>
+  <head>
+    <title>Add Contact</title>
+  </head>
+  <body>
+    <div id="content">
+      <!-- sidebar -->
+
+      <!-- user is logged in : sidebar -->
+
+      <div th:if="${loggedInUser}">
+        <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+      </div>
+
+      <div class="sm:pl-64 pt-20" style="height: auto">
+        <div class="grid grid-cols-12">
+          <div class="col-span-3"></div>
+          <div class="col-span-12 md:col-span-6">
+            <div
+              class="card block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+            >
+              <div data-th-replace="~{message::messagebox}"></div>
+
+              <h1 class="text-2xl font-semibold">Add New Customer</h1>
+			
+
+              <form
+                action=""
+                class="mt-8"
+                data-th-action="@{'/user/customer/add'}"
+                data-th-object="${customerForm}"
+                method="post"
+                enctype="multipart/form-data"
+              >
+                <!-- Customer Details -->
+           <div th:if="${#fields.hasErrors() or #fields.hasGlobalErrors()}" class="mb-4 p-4 border border-red-500 bg-red-100 rounded">
+  <p class="text-red-700 font-semibold mb-2">Please fix the following errors:</p>
+  <ul class="list-disc list-inside text-red-700 text-sm">
+
+    <!-- Field errors -->
+    <li th:each="err : ${#fields.errors()}" th:text="${err}"></li>
+
+    <!-- Global errors -->
+    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+
+  </ul>
+</div>
+ 
+    <div id="guest-container">
+        <div class="guest-entry border p-4 mb-6 rounded-lg bg-gray-50 dark:bg-gray-800 shadow-md">
+			
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                Guest <span class="guest-number">1</span>
+            </h3>
+
+			<!-- Full Name -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-regular fa-user w-4 h-4"></i>
+			        </div>
+			        <input type="text" name="customerDetails[0].name"
+			            class="name-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+			    </div>
+			</div>
+			
+			<!-- Gender -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gender</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-solid fa-venus-mars w-4 h-4"></i>
+			        </div>
+			        <select name="customerDetails[0].gender"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+				        id="gender">
+				        <option value="" selected>Select Gender</option>
+				        <option th:each="room : ${T(com.hnb.enums.Gender).values()}"
+				        			th:value="${room}" 
+				        			th:text="${room}">
+		        			</option>
+				      </select>
+			       
+			    </div>
+			</div>
+			
+			<!-- Age -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Age</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-solid fa-hourglass-half w-4 h-4"></i>
+			        </div>
+			        <input type="number" name="customerDetails[0].age"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+			            />
+			    </div>
+			</div>
+			
+			<!-- Pin Code -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pin Code</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-solid fa-map-pin w-4 h-4"></i>
+			        </div>
+			        <input type="text" name="customerDetails[0].pinCode" maxlength="6" pattern="\d{6}"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+			    </div>
+			</div>
+			
+			<!-- City -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-solid fa-city w-4 h-4"></i>
+			        </div>
+			        <input type="text" name="customerDetails[0].city"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+			    </div>
+			</div>
+			
+			<!-- Address -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-start ps-3.5 pt-2 pointer-events-none">
+			            <i class="fa-solid fa-location-dot w-4 h-4"></i>
+			        </div>
+			        <textarea name="customerDetails[0].address" rows="4"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+			    </div>
+			</div>
+			
+			<!-- Document Type -->
+			<div class="mb-4">
+			    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Document Type</label>
+			    <div class="relative mb-1">
+			        <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+			            <i class="fa-regular fa-id-card w-4 h-4"></i>
+			        </div>
+			        <select name="customerDetails[0].documentType"
+			            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+			                   focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+			                   dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+			                   dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+			            <option value="">Select Document</option>
+			           <option th:each="doc : ${T(com.hnb.enums.DocumentType).values()}"
+				        			th:value="${doc}" 
+				        			th:text="${doc}">
+		        			</option>
+			            <!-- Add other document types from your enum -->
+			        </select>
+			    </div>
+			</div>
+
+            <!-- Document Front -->
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="documentFront">Document Front</label>
+                <input type="file" name="customerDetails[0].documentFront"
+                    class="doc-front-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                           dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                           dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <!-- Document Back -->
+            <div class="mb-4">
+                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="documentBack">Document Back</label>
+                <input type="file" name="customerDetails[0].documentBack"
+                    class="doc-back-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 
+                           dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                           dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+	
+	        </div>
+	    </div>
+	 		  <!-- Add More Button -->
+	    <button type="button" id="addGuestBtn"
+	        class="mb-4 inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 
+	               text-white text-sm font-medium rounded-md shadow">
+	        <i class="fa fa-plus mr-2"></i> Add More Guest
+	    </button>
+	        
+		                
+		                
+		                
+	
+  <!-- Mobile Number -->
+  <div class="mb-4">
+    <label for="phoneNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mobile Number</label>
+    <div class="relative mb-1">
+      <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+        <i class="fa-solid w-4 h-4 fa-phone"></i>
+      </div>
+      <input
+        type="text"
+        id="phoneNumber"
+        name="phoneNumber"
+        th:field="*{phoneNumber}"
+        placeholder="9823525525"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('phoneNumber')}" class="text-red-500 text-sm">
+      <p th:errors="*{phoneNumber}"></p>
+    </div>
+  </div>
+
+  <!-- Room Number -->
+  <div class="mb-4">
+    <label for="roomNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Room Number</label>
+    <div class="relative mb-1">
+      <select
+        id="roomNumber"
+        name="roomNumber"
+        th:field="*{roomNumber}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="" selected>Select Room</option>
+        <option th:each="room : ${T(com.hnb.enums.RoomNumber).values()}" th:value="${room}" th:text="${room}"></option>
+      </select>
+    </div>
+    <div th:if="${#fields.hasErrors('roomNumber')}" class="text-red-500 text-sm">
+      <p th:errors="*{roomNumber}"></p>
+    </div>
+  </div>
+
+  <!-- Check-in Date -->
+  <div class="mb-4">
+    <label for="checkIn" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Check-in Date</label>
+    <div class="relative mb-1">
+      <input
+        type="datetime-local"
+        id="checkIn"
+        name="checkIn"
+        th:field="*{checkIn}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('checkIn')}" class="text-red-500 text-sm">
+      <p th:errors="*{checkIn}"></p>
+    </div>
+  </div>
+
+  <!-- Check-out Date -->
+  <div class="mb-4">
+    <label for="checkOut" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Check-out Date</label>
+    <div class="relative mb-1">
+      <input
+        type="datetime-local"
+        id="checkOut"
+        name="checkOut"
+        th:field="*{checkOut}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('checkOut')}" class="text-red-500 text-sm">
+      <p th:errors="*{checkOut}"></p>
+    </div>
+  </div>
+
+  <!-- Amount -->
+  <div class="mb-4">
+    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+    <div class="relative mb-1">
+      <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+        <i class="fa-solid w-4 h-4 fa-indian-rupee-sign"></i>
+      </div>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        th:field="*{amount}"
+        placeholder="Enter amount"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('amount')}" class="text-red-500 text-sm">
+      <p th:errors="*{amount}"></p>
+    </div>
+  </div>
+
+  <!-- Payment Mode -->
+  <div class="mb-4">
+    <label for="paymentMode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment Mode</label>
+    <div class="relative mb-1">
+      <select
+        id="paymentMode"
+        name="paymentMode"
+        th:field="*{paymentMode}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="" selected>Select Payment Mode</option>
+        <option th:each="mode : ${T(com.hnb.enums.PaymentMode).values()}" th:value="${mode}" th:text="${mode}"></option>
+      </select>
+    </div>
+    <div th:if="${#fields.hasErrors('paymentMode')}" class="text-red-500 text-sm">
+      <p th:errors="*{paymentMode}"></p>
+    </div>
+  </div>
+
+
+  <!-- Description -->
+  <div class="mb-4">
+    <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
+    <div class="relative mb-1">
+      <textarea
+        id="description"
+        name="description"
+        th:field="*{description}"
+        rows="3"
+        placeholder="Additional notes..."
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      ></textarea>
+    </div>
+    <div th:if="${#fields.hasErrors('description')}" class="text-red-500 text-sm">
+      <p th:errors="*{description}"></p>
+    </div>
+  </div>	                
+		                
+		                
+		                
+		
+
+			
+
+
+                <div class="button-container text-center">
+                  <button
+                    type="submit"
+                    class="px-3 py-2 dark:bg-blue-600 hover:dark:bg-blue-700 rounded bg-black text-white"
+                  >
+                    Save Contact
+                  </button>
+                  <button
+                    type="reset"
+                    class="px-3 py-2 dark:bg-blue-600 hover:dark:bg-blue-700 rounded bg-black text-white"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script data-th-src="@{'/js/admin.js'}"></script>
+    <script>
+      console.log("this is profile page");
+    </script>
+  </body>
+</html>

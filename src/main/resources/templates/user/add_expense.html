@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  th:replace="~{base :: parent(~{::#content},~{::title},~{::script})}"
+>
+  <head>
+    <title>Add Contact</title>
+  </head>
+  <body>
+    <div id="content">
+      <!-- sidebar -->
+
+      <!-- user is logged in : sidebar -->
+
+      <div th:if="${loggedInUser}">
+        <div data-th-replace="~{user/sidebar :: sidebar}"></div>
+      </div>
+
+      <div class="sm:pl-64 pt-20" style="height: auto">
+        <div class="grid grid-cols-12">
+          <div class="col-span-3"></div>
+          <div class="col-span-12 md:col-span-6">
+            <div
+              class="card block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+            >
+              <div data-th-replace="~{message::messagebox}"></div>
+
+              <h1 class="text-2xl font-semibold">Add New Expense</h1>
+			
+
+              <form
+                action=""
+                class="mt-8"
+                data-th-action="@{'/user/expense/add'}"
+                data-th-object="${expenseForm}"
+                method="post"
+                enctype="multipart/form-data"
+              >
+                <!-- Customer Details -->
+           <div th:if="${#fields.hasErrors() or #fields.hasGlobalErrors()}" class="mb-4 p-4 border border-red-500 bg-red-100 rounded">
+  <p class="text-red-700 font-semibold mb-2">Please fix the following errors:</p>
+  <ul class="list-disc list-inside text-red-700 text-sm">
+
+    <!-- Field errors -->
+    <li th:each="err : ${#fields.errors()}" th:text="${err}"></li>
+
+    <!-- Global errors -->
+    <li th:each="err : ${#fields.globalErrors()}" th:text="${err}"></li>
+
+  </ul>
+</div>
+ 
+    <div id="guest-container">
+    
+      <!-- Expense Type -->
+  <div class="mb-4">
+    <label for="roomNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Room Number <span class="text-red-500">*</span></label>
+    <div class="relative mb-1">
+      <select
+        id="expenseType"
+        name="expenseType"
+        th:field="*{expenseType}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="" selected>Select Expense Type</option>
+        <option th:each="type : ${T(com.hnb.enums.ExpenseType).values()}" th:value="${type}" th:text="${type}"></option>
+      </select>
+    </div>
+    <div th:if="${#fields.hasErrors('expenseType')}" class="text-red-500 text-sm">
+      <p th:errors="*{expenseType}"></p>
+    </div>
+  </div>
+    
+              
+	  <!-- Amount -->
+  <div class="mb-4">
+    <label for="amount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount <span class="text-red-500">*</span></label>
+    <div class="relative mb-1">
+      <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+        <i class="fa-solid w-4 h-4 fa-indian-rupee-sign"></i>
+      </div>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        th:field="*{amount}"
+        placeholder="Enter amount"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('amount')}" class="text-red-500 text-sm">
+      <p th:errors="*{amount}"></p>
+    </div>
+  </div>
+  
+    <!-- Expense Date -->
+  <div class="mb-4">
+    <label for="expenseDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Expense Date <span class="text-red-500">*</span></label>
+    <div class="relative mb-1">
+      <input
+        type="datetime-local"
+        id="expenseDate"
+        name="expenseDate"
+        th:field="*{expenseDate}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </div>
+    <div th:if="${#fields.hasErrors('expenseDate')}" class="text-red-500 text-sm">
+      <p th:errors="*{expenseDate}"></p>
+    </div>
+  </div>
+  
+    <!-- Payment Mode -->
+  <div class="mb-4">
+    <label for="paymentMode" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment Mode <span class="text-red-500">*</span></label>
+    <div class="relative mb-1">
+      <select
+        id="paymentMode"
+        name="paymentMode"
+        th:field="*{paymentMode}"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      >
+        <option value="" selected>Select Payment Mode</option>
+        <option th:each="mode : ${T(com.hnb.enums.PaymentMode).values()}" th:value="${mode}" th:text="${mode}"></option>
+      </select>
+    </div>
+    <div th:if="${#fields.hasErrors('paymentMode')}" class="text-red-500 text-sm">
+      <p th:errors="*{paymentMode}"></p>
+    </div>
+  </div>
+  
+  
+  
+  	<!-- Description -->
+  <div class="mb-4">
+    <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Comment</label>
+    <div class="relative mb-1">
+      <textarea
+        id="notes"
+        name="notes"
+        th:field="*{notes}"
+        rows="4"
+        placeholder="Additional notes..."
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      ></textarea>
+    </div>
+    <div th:if="${#fields.hasErrors('notes')}" class="text-red-500 text-sm">
+      <p th:errors="*{notes}"></p>
+    </div>
+  </div>	       
+   
+          <!-- contact image field -->
+       <div class="mb-3">
+         <label
+           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+           for="large_size"
+           >Bill</label
+         >
+         <input
+           id="image_file_input"
+           class="block w-full mb-2 text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+           data-th-field="*{billUrl}"
+           type="file"
+         />
+
+         <p
+           class="text-red-500"
+           data-th-if="${#fields.hasErrors('billUrl')}"
+           data-th-errors="*{billUrl}"
+         >
+           Invalid Name
+         </p>
+
+         
+       </div>
+        
+		                       
+       
+
+                <div class="button-container text-center">
+                  <button
+                    type="submit"
+                    class="px-3 py-2 dark:bg-blue-600 hover:dark:bg-blue-700 rounded bg-black text-white"
+                  >
+                    Save Expense
+                  </button>
+                  <button
+                    type="reset"
+                    class="px-3 py-2 dark:bg-blue-600 hover:dark:bg-blue-700 rounded bg-black text-white"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script data-th-src="@{'/js/admin.js'}"></script>
+    <script>
+      console.log("this is profile page");
+    </script>
+  </body>
+</html>

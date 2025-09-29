@@ -1,0 +1,30 @@
+
+# Maven target folder (compiled output)
+target/
+
+# Eclipse project files
+.classpath
+.project
+.settings/
+.factorypath
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables or secrets
+.env
+
+# Node modules (if you have frontend)
+node_modules/
+
+# Uploads folder (your custom folder)
+uploads/
+
+# Java class files and archives
+*.class
+*.jar
+*.war
