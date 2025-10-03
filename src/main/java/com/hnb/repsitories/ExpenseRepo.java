@@ -40,7 +40,7 @@ public interface ExpenseRepo extends JpaRepository<Expense, Integer> {
 	@Query(value = """
 			  SELECT
 			      YEAR(e.created_at) AS year,
-				  MONTHNAME(e.created_at) AS month,
+				  ANY_VALUE(DATE_FORMAT(e.created_at, '%b')) AS month,
 			      SUM(e.amount) AS totalExpense,
 			      SUM(CASE WHEN e.payment_mode = 'CASH' THEN e.amount ELSE 0 END) AS totalCashExpense,
 			      SUM(CASE WHEN e.payment_mode = 'ONLINE' THEN e.amount ELSE 0 END) AS totalOnlineExpense,
@@ -104,7 +104,7 @@ public interface ExpenseRepo extends JpaRepository<Expense, Integer> {
 		@Query(value = """
 				SELECT
 				    YEAR(e.created_at) AS year,
-					MONTHNAME(e.created_at) AS month,
+					ANY_VALUE(DATE_FORMAT(e.created_at, '%b')) AS month,
 				    SUM(e.amount) AS totalExpense,
 				    COALESCE((
 				        SELECT SUM(c.amount)
