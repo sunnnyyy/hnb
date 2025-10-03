@@ -30,7 +30,8 @@ public interface ExpenseRepo extends JpaRepository<Expense, Integer> {
 
 	@Query("SELECT e FROM Expense e WHERE " + "(LOWER(e.expenseType) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
 			+ "CAST(e.amount AS string) LIKE CONCAT('%', :keyword, '%') OR "
-			+ "LOWER(e.notes) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND "
+			+ "LOWER(e.notes) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
+		    + "LOWER(CAST(e.paymentMode AS string)) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND "
 			+ "(:expenseType IS NULL OR e.expenseType = :expenseType)")
 	Page<Expense> searchExpenses(@Param("keyword") String keyword, @Param("expenseType") ExpenseType expenseType,
 			Pageable pageable);

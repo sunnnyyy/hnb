@@ -5,16 +5,16 @@ public enum ExpenseType {
     FOOD,
     DHOBI,
     SALARY,
-    TRAVEL,
-    UTILITIES,
-    SAFAI_ROOM,
+    WI_FI,
     BREAK_FAST,
     lUNCH,
     DINNER,
-    HOTEL_MAINTENANCE,
+    TRAVEL,
+    SAFAI_ROOM,
+    HOTEL_EXPENSE,
     SAFAI_BATHROOM,
     ELECTRICITY_BILL,
-    ENTERTAINMENT,
+    HOTEL_MAINTENANCE,
     OTHER
 //    	
 //    public String toDisplayString() {
