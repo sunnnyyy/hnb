@@ -195,7 +195,7 @@ public class CustomerController {
 	@RequestMapping
 	public String viewContacts(@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE + "") int size,
-			@RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+			@RequestParam(value = "sortBy", defaultValue = "checkIn") String sortBy,
 			@RequestParam(value = "direction", defaultValue = "desc") String direction, Model model,
 			Authentication authentication) {
 
@@ -225,7 +225,7 @@ public class CustomerController {
 			@ModelAttribute CustomerSearchForm customerSearchForm,
 			@RequestParam(value = "size", defaultValue = AppConstants.PAGE_SIZE + "") int size,
 			@RequestParam(value = "page", defaultValue = "0") int page,
-			@RequestParam(value = "sortBy", defaultValue = "createdAt") String sortBy,
+			@RequestParam(value = "sortBy", defaultValue = "checkIn") String sortBy,
 			@RequestParam(value = "direction", defaultValue = "desc") String direction, Model model,
 			Authentication authentication) {
 
@@ -264,19 +264,19 @@ public class CustomerController {
 		return "user/customer";
 	}
 
-	// detete contact
-	@RequestMapping("/delete/{contactId}")
-	public String deleteContact(@PathVariable("contactId") int contactId, HttpSession session) {
-		customerService.delete(contactId);
-		logger.info("contactId {} deleted", contactId);
-
-		session.setAttribute("message",
-				Message.builder().content("Contact is Deleted successfully !! ").type(MessageType.green).build()
-
-		);
-
-		return "redirect:/user/contacts";
-	}
+//	// detete contact
+//	@RequestMapping("/delete/{contactId}")
+//	public String deleteContact(@PathVariable("contactId") int contactId, HttpSession session) {
+//		customerService.delete(contactId);
+//		logger.info("contactId {} deleted", contactId);
+//
+//		session.setAttribute("message",
+//				Message.builder().content("Contact is Deleted successfully !! ").type(MessageType.green).build()
+//
+//		);
+//
+//		return "redirect:/user/contacts";
+//	}
 
 
 	@GetMapping("/edit/{customerId}")
