@@ -73,7 +73,7 @@ public class SecurityConfig {
         	    authorize.requestMatchers("/access-denied").permitAll();
             authorize.requestMatchers("/user/expense/report").hasRole("ADMIN");
             authorize.requestMatchers("/user/expense/report/owner").hasRole("ADMIN");
-
+            authorize.requestMatchers("/files/**").authenticated();
             authorize.requestMatchers("/user/**").authenticated();
             authorize.anyRequest().permitAll();
             
