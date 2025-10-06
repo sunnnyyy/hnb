@@ -40,39 +40,39 @@ public interface ExpenseRepo extends JpaRepository<Expense, Integer> {
 
 	@Query(value = """
 			  SELECT
-			      YEAR(e.created_at) AS year,
-				  ANY_VALUE(DATE_FORMAT(e.created_at, '%b')) AS month,
+			      YEAR(e.expense_date) AS year,
+				  ANY_VALUE(DATE_FORMAT(e.expense_date, '%b')) AS month,
 			      SUM(e.amount) AS totalExpense,
 			      SUM(CASE WHEN e.payment_mode = 'CASH' THEN e.amount ELSE 0 END) AS totalCashExpense,
 			      SUM(CASE WHEN e.payment_mode = 'ONLINE' THEN e.amount ELSE 0 END) AS totalOnlineExpense,
 			      COALESCE((
 			          SELECT SUM(c.amount)
 			          FROM customer c
-			          WHERE YEAR(c.check_in) = YEAR(e.created_at)
-			            AND MONTH(c.check_in) = MONTH(e.created_at)
+			          WHERE YEAR(c.check_in) = YEAR(e.expense_date)
+			            AND MONTH(c.check_in) = MONTH(e.expense_date)
 			            AND c.payment_mode = 'CASH'
 			      ), 0) AS totalCashRevenue,
 			      COALESCE((
 			          SELECT SUM(c.amount)
 			          FROM customer c
-			          WHERE YEAR(c.check_in) = YEAR(e.created_at)
-			            AND MONTH(c.check_in) = MONTH(e.created_at)
+			          WHERE YEAR(c.check_in) = YEAR(e.expense_date)
+			            AND MONTH(c.check_in) = MONTH(e.expense_date)
 			            AND c.payment_mode = 'ONLINE'
 			      ), 0) AS totalOnlineRevenue,
 			      COALESCE((
 			          SELECT COUNT(*)
 			          FROM customer c
-			          WHERE YEAR(c.check_in) = YEAR(e.created_at)
-			            AND MONTH(c.check_in) = MONTH(e.created_at)
+			          WHERE YEAR(c.check_in) = YEAR(e.expense_date)
+			            AND MONTH(c.check_in) = MONTH(e.expense_date)
 			      ), 0) AS totalCustomers
 			  FROM expense e
-			  GROUP BY YEAR(e.created_at), MONTH(e.created_at)
-			  ORDER BY YEAR(e.created_at) DESC, MONTH(e.created_at) DESC
+			  GROUP BY YEAR(e.expense_date), MONTH(e.expense_date)
+			  ORDER BY YEAR(e.expense_date) DESC, MONTH(e.expense_date) DESC
 			  """, countQuery = """
 			SELECT COUNT(*) FROM (
 			    SELECT 1
 			    FROM expense e
-			    GROUP BY YEAR(e.created_at), MONTH(e.created_at)
+			    GROUP BY YEAR(e.expense_date), MONTH(e.expense_date)
 			) AS grouped
 			""", nativeQuery = true)
 	Page<ProfitAndLossProjection> getProfitAndLossReport(Pageable pageable);
@@ -104,20 +104,21 @@ public interface ExpenseRepo extends JpaRepository<Expense, Integer> {
 
 		@Query(value = """
 				SELECT
-				    YEAR(e.created_at) AS year,
-					ANY_VALUE(DATE_FORMAT(e.created_at, '%b')) AS month,
+				    YEAR(e.expense_date) AS year,
+					ANY_VALUE(DATE_FORMAT(e.expense_date, '%b')) AS month,
 				    SUM(e.amount) AS totalExpense,
 				    COALESCE((
 				        SELECT SUM(c.amount)
 				        FROM customer c
-				        WHERE YEAR(c.check_in) = YEAR(e.created_at)
-				          AND MONTH(c.check_in) = MONTH(e.created_at)
+				        WHERE YEAR(c.check_in) = YEAR(e.expense_date)
+				          AND MONTH(c.check_in) = MONTH(e.expense_date)
 				    ), 0) AS totalRevenue,
 					(SELECT COALESCE(SUM(amount),0) FROM expense) AS totalExpenseAllMonths,
-					(SELECT COALESCE(SUM(amount),0) FROM customer) AS totalRevenueAllMonths				FROM expense e
-				WHERE e.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-				GROUP BY YEAR(e.created_at), MONTH(e.created_at)
-				ORDER BY YEAR(e.created_at) DESC, MONTH(e.created_at) DESC
+					(SELECT COALESCE(SUM(amount),0) FROM customer) AS totalRevenueAllMonths
+					FROM expense e
+				WHERE e.expense_date >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+				GROUP BY YEAR(e.expense_date), MONTH(e.expense_date)
+				ORDER BY YEAR(e.expense_date) DESC, MONTH(e.expense_date) DESC
 
 						    """, nativeQuery = true)
 		List<LastSixMonthSummaryDTO> getLastSixMonthSummary();
