@@ -20,7 +20,10 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
     Page<Customer> findAll(Pageable pageable);
 
 		
-    @Query("SELECT c FROM Customer c LEFT JOIN FETCH c.customerDetails")
+    @Query(
+    		  value = "SELECT DISTINCT c FROM Customer c LEFT JOIN FETCH c.customerDetails",
+    		  countQuery = "SELECT COUNT(c) FROM Customer c"
+    		)
     Page<Customer> findAllWithCustomerDetails(Pageable pageable);
     
     // custom query method
@@ -33,8 +36,10 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
 
 //    Page<Customer> findByUserAndPhoneNumberContaining(User user, String phonekeyword, Pageable pageable);
 
-    @Query("SELECT c FROM Customer c JOIN c.customerDetails cd " +
-    	       "WHERE (LOWER(c.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+    @Query("SELECT DISTINCT c FROM Customer c JOIN c.customerDetails cd " +
+    	       "WHERE (" +
+    	       "   :keyword IS NULL OR :keyword = '' " +
+    	       "OR LOWER(c.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
     	       "OR LOWER(c.roomNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
     	       "OR STR(c.amount) LIKE CONCAT('%', :keyword, '%') " +
     	       "OR LOWER(c.paymentMode) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
@@ -45,7 +50,7 @@ public interface CustomerRepo extends JpaRepository<Customer, Integer> {
     	       "OR LOWER(cd.pinCode) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
     	       "OR LOWER(cd.city) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
     	       "OR LOWER(cd.address) LIKE LOWER(CONCAT('%', :keyword, '%'))) " + 
-    	       "AND (:paymentMode IS NULL OR c.paymentMode = :paymentMode)")
+    	       "AND (:paymentMode IS NULL OR :paymentMode = '' OR c.paymentMode = :paymentMode)")
     Page<Customer> searchCustomer(@Param("keyword") String keyword,
     								 @Param("paymentMode") PaymentMode paymentMode,
  	                             Pageable pageable);
